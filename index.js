@@ -1,10 +1,15 @@
 require("dotenv").config();
 const TelegramBot = require('node-telegram-bot-api')
+const express = require('express')
+const app = express()
 const axios = require("axios");
 const { TOKEN } = process.env;
 let bot = new TelegramBot(TOKEN, { polling: true })
 let url = "https://api.ifreeicloud.co.uk";
 
+app.get("/", function(res,req){
+    res.send("working")
+})
 bot.on('message', function (msg) {
     console.log(msg.text);
     let chatID = msg.chat.id;
@@ -42,3 +47,5 @@ FMI: ON 🔴`)
             } })
 
 })
+
+app.listen(3000 || 5000)
