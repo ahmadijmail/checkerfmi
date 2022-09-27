@@ -10,6 +10,12 @@ let url = "https://api.ifreeicloud.co.uk";
 app.get("/", function(res,req){
     res.send("working")
 })
+
+
+app.listen(process.env.PORT)
+
+
+
 bot.on('message', function (msg) {
     console.log(msg.text);
     let chatID = msg.chat.id;
@@ -48,4 +54,3 @@ FMI: ON 🔴`)
 
 })
 
-app.listen(3000 || 5000)
