@@ -7,7 +7,7 @@ const { TOKEN } = process.env;
 let bot = new TelegramBot(TOKEN, { polling: true })
 let url = "https://api.ifreeicloud.co.uk";
 
-app.get("/", function(res,req){
+app.get("/", function(req,res){
     res.send("working")
 })
 
