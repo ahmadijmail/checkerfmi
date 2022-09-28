@@ -3,7 +3,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const express = require("express");
 const app = express();
 const axios = require("axios");
-const { TOKEN } = process.env;
+const { TOKEN, ID } = process.env;
 let bot = new TelegramBot(TOKEN, { polling: true });
 let url = "https://api.ifreeicloud.co.uk";
 
@@ -15,7 +15,7 @@ app.listen(process.env.PORT);
 
 bot.on("message", function (msg) {
   console.log(msg.text);
-  let chatID = msg.chat.id;
+  let chatID = ID;
   let tex = msg.text;
   let serviceid = tex.split(" ");
   console.log(serviceid);
