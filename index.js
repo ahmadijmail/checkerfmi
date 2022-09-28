@@ -14,9 +14,9 @@ app.get("/", function (req, res) {
 app.listen(process.env.PORT);
 
 bot.on("message", function (msg) {
+  let chatID = msg.chat.id;
   if(msg.chat.id==ID){
   console.log(msg.text);
-  let chatID = msg.chat.id;
   let tex = msg.text;
   let serviceid = tex.split(" ");
   console.log(serviceid);
