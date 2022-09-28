@@ -71,4 +71,5 @@ simLock: ${res.data.object.simLock == false ? "Unlocked" : "Locked"}
         }
       }
     });
-}});
+}else bot.sendMessage(
+  chatID,"NOT ALLOWED")});
