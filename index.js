@@ -3,7 +3,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const express = require("express");
 const app = express();
 const axios = require("axios");
-const { TOKEN, ID } = process.env;
+const { TOKEN, ID, KEY } = process.env;
 let bot = new TelegramBot(TOKEN, { polling: true });
 let url = "https://api.ifreeicloud.co.uk";
 
@@ -28,7 +28,7 @@ bot.on("message", function (msg) {
         params: {
           service: serviceid[0] == "info" ? 120 : 4,
           imei: serviceid[0] == "info" ? serviceid[1] : tex,
-          key: "9S3-CK9-H4G-EWT-XKI-VO9-J9X-QZI",
+          key: KEY,
         },
       },
       bot.sendMessage(chatID, "Please Wait ...")
@@ -58,7 +58,7 @@ res.data.object.fmiOn == false ? "FMI: OFF ✅ " : "FMI: ON 🔴"
 Model: ${res.data.object.modelDescription?res.data.object.modelDescription:res.data.object.model}
 IMEI: ${res.data.object.imei}
 IMEI2: ${res.data.object.imei2}
-Serial: ${res.data.object.imei}
+Serial: ${res.data.object.serial}
 iCloud Lock: ${res.data.object.fmiON == true ? " ON 🔴 " : " OFF ✅ "} 
 iCloud Status: ${ res.data.object.lostMode == true? " Lost 🔴 " : " Clean ✅" } 
 blacklistStatus: ${res.data.object.blacklistStatus == "Clean"? "  Clean   ✅": "BlackListed 🔴 "}
