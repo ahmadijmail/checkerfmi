@@ -5,7 +5,7 @@ const app = express();
 const axios = require("axios");
 const { TOKEN, ID, KEY } = process.env;
 let bot = new TelegramBot(TOKEN, { polling: true });
-let time=require('moment') 
+let time = require("moment");
 let url = "https://api.ifreeicloud.co.uk";
 
 app.get("/", function (req, res) {
@@ -13,67 +13,73 @@ app.get("/", function (req, res) {
 });
 
 app.listen(process.env.PORT);
-console.log(time().format('YYYY-MM-DD HH:mm:SS'));
+console.log(time().format("YYYY-MM-DD HH:mm:SS"));
 bot.on("message", function (msg) {
   let chatID = msg.chat.id;
-  if(msg.chat.id==ID){
-  console.log(msg.text);
-  let tex = msg.text;
-  let serviceid = tex.split(" ");
-  console.log(serviceid);
-  axios
-    .post(
-      url,
-      null,
-      {
-        params: {
-          service: serviceid[0] == "info" ? 120 : 4,
-          imei: serviceid[0] == "info" ? serviceid[1] : tex,
-          key: KEY,
+  if (msg.chat.id == ID) {
+    console.log(msg.text);
+    let tex = msg.text;
+    let serviceid = tex.split(" ");
+    console.log(serviceid);
+    axios
+      .post(
+        url,
+        null,
+        {
+          params: {
+            service: serviceid[0] == "info" ? 120 : 4,
+            imei: serviceid[0] == "info" ? serviceid[1] : tex,
+            key: KEY,
+          },
         },
-      },
-      bot.sendMessage(chatID, "Please Wait ...")
-    )
-    .then((res) => {
-      if (serviceid[0] != "info") {
-        if (res.data.success == false) {
-          bot.sendMessage(chatID, res.data.error);
-        } else {
-          bot.sendMessage(
-            chatID,
-            `IMEI: ${res.data.object.imei}
-${
-res.data.object.fmiOn == false ? "FMI: OFF ✅ " : "FMI: ON 🔴"
-              }
-${time().format('YYYY-MM-DD HH:mm:SS')}              
+        bot.sendMessage(chatID, "Please Wait ...")
+      )
+      .then((res) => {
+        if (serviceid[0] != "info") {
+          if (res.data.success == false) {
+            bot.sendMessage(chatID, res.data.error);
+          } else {
+            bot.sendMessage(
+              chatID,
+              `IMEI: ${res.data.object.imei}
+${res.data.object.fmiOn == false ? "Find My: OFF ✅ " : "Find My: ON 🔴"}
+📅 TimeStamp => ${time().format("YYYY-MM-DD HH:mm:SS")}              
 © Powered By AI
               `
-          );
+            );
+          }
         }
-      }
-      if (serviceid[0] == "info") {
-        console.log(res.data);
-        if (res.data.success == false) {
-          bot.sendMessage(chatID, res.data.error);
-        } else {
-          bot.sendMessage(
-            chatID,
-            `
-Model: ${res.data.object.modelDescription?res.data.object.modelDescription:res.data.object.model}
+        if (serviceid[0] == "info") {
+          console.log(res.data);
+          if (res.data.success == false) {
+            bot.sendMessage(chatID, res.data.error);
+          } else {
+            bot.sendMessage(
+              chatID,
+              `
+Model: ${
+                res.data.object.modelDescription
+                  ? res.data.object.modelDescription
+                  : res.data.object.model
+              }
 IMEI: ${res.data.object.imei}
 IMEI2: ${res.data.object.imei2}
 Serial: ${res.data.object.serial}
 iCloud Lock: ${res.data.object.fmiON == true ? " ON 🔴 " : " OFF ✅ "} 
-iCloud Status: ${ res.data.object.lostMode == true? " Lost 🔴 " : " Clean ✅" } 
-blacklistStatus: ${res.data.object.blacklistStatus == "Clean"? "  Clean   ✅": "BlackListed 🔴 "}
+iCloud Status: ${res.data.object.lostMode == true ? " Lost 🔴 " : " Clean ✅"} 
+blacklistStatus: ${
+                res.data.object.blacklistStatus == "Clean"
+                  ? "  Clean   ✅"
+                  : "BlackListed 🔴 "
+              }
 replacedStatus: ${res.data.object.replacedDevice}
 Warranty Status: ${res.data.object.warrantyStatus}
 Estimated Purchase Date: ${res.data.object.estimatedPurchaseDate}
 simLock: ${res.data.object.simLock == false ? "Unlocked" : "Locked"}   
                `
-          );
+            );
+          }
         }
-      }
-    });
-}else bot.sendMessage(
-  chatID,"NOT ALLOWED")});
+      });
+  } else bot.sendMessage(chatID, "NOT ALLOWED");
+});
