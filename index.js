@@ -46,7 +46,7 @@ ${
 res.data.object.fmiOn == false ? "FMI: OFF ✅ " : "FMI: ON 🔴"
               }
 ${time().format('YYYY-MM-DD HH:mm:SS')}              
-              Provied By AI 
+© Powered By AI
               `
           );
         }
