@@ -43,7 +43,7 @@ bot.on("message", function (msg) {
               chatID,
               `IMEI: ${res.data.object.imei}
 ${res.data.object.fmiOn == false ? "Find My: OFF ✅ " : "Find My: ON 🔴"}
-📅 TimeStamp => ${time().format("YYYY-MM-DD HH:mm:SS")}              
+Time: ${time().format("YYYY-MM-DD HH:mm:SS")}              
 © Powered By AI
               `
             );
