@@ -5,6 +5,7 @@ const app = express();
 const axios = require("axios");
 const { TOKEN, ID, KEY } = process.env;
 let bot = new TelegramBot(TOKEN, { polling: true });
+let time=require('moment') 
 let url = "https://api.ifreeicloud.co.uk";
 
 app.get("/", function (req, res) {
@@ -12,7 +13,7 @@ app.get("/", function (req, res) {
 });
 
 app.listen(process.env.PORT);
-
+console.log(time().format('YYYY-MM-DD HH:mm:SS'));
 bot.on("message", function (msg) {
   let chatID = msg.chat.id;
   if(msg.chat.id==ID){
@@ -43,7 +44,10 @@ bot.on("message", function (msg) {
             `IMEI: ${res.data.object.imei}
 ${
 res.data.object.fmiOn == false ? "FMI: OFF ✅ " : "FMI: ON 🔴"
-              } `
+              }
+${time().format('YYYY-MM-DD HH:mm:SS')}              
+              Provied By AI 
+              `
           );
         }
       }
