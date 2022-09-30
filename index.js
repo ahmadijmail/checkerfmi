@@ -41,7 +41,7 @@ bot.on("message", function (msg) {
           bot.sendMessage(
             chatID,
             `IMEI: ${res.data.object.imei}
-FMI: ${
+${
 res.data.object.fmiOn == false ? "FMI: OFF ✅ " : "FMI: ON 🔴"
               } `
           );
