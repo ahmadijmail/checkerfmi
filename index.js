@@ -42,7 +42,13 @@ bot.on("message", function (msg) {
             bot.sendMessage(
               chatID,
               `IMEI: ${res.data.object.imei}
-${res.data.object.fmiOn == false ? "Find My: OFF ✅ " :res.data.object.fmiOn == true? "Find My: ON 🔴":"Check with another checker"}
+${
+  res.data.object.fmiOn == false
+    ? "Find My: OFF ✅ "
+    : res.data.object.fmiOn == true
+    ? "Find My: ON 🔴"
+    : "Check with another checker"
+}
 Time: ${time().format("YYYY-MM-DD HH:mm:SS")}              
 © Powered By AI
               `
@@ -65,8 +71,20 @@ Model: ${
 IMEI: ${res.data.object.imei}
 IMEI2: ${res.data.object.imei2}
 Serial: ${res.data.object.serial}
-iCloud Lock: ${res.data.object.fmiON == true ? " ON 🔴 " :res.data.object.fmiON == false? " OFF ✅ ":"Double Check" } 
-iCloud Status: ${res.data.object.lostMode == true ? " Lost 🔴 " : res.data.object.lostMode == false ? " Clean ✅":"Double Check"} 
+iCloud Lock: ${
+                res.data.object.fmiON == true
+                  ? " ON 🔴 "
+                  : res.data.object.fmiON == false
+                  ? " OFF ✅ "
+                  : "Double Check"
+              } 
+iCloud Status: ${
+                res.data.object.lostMode == true
+                  ? " Lost 🔴 "
+                  : res.data.object.lostMode == false
+                  ? " Clean ✅"
+                  : "Double Check"
+              } 
 blacklistStatus: ${
                 res.data.object.blacklistStatus == "Clean"
                   ? "  Clean   ✅"
@@ -75,6 +93,7 @@ blacklistStatus: ${
 replacedStatus: ${res.data.object.replacedDevice}
 Warranty Status: ${res.data.object.warrantyStatus}
 Estimated Purchase Date: ${res.data.object.estimatedPurchaseDate}
+carrier: ${res.data.object.carrier}
 simLock: ${res.data.object.simLock == false ? "Unlocked" : "Locked"}   
                `
             );
