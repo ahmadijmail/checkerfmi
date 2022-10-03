@@ -94,6 +94,7 @@ replacedStatus: ${res.data.object.replacedDevice}
 Warranty Status: ${res.data.object.warrantyStatus}
 Estimated Purchase Date: ${res.data.object.estimatedPurchaseDate}
 carrier: ${res.data.object.carrier}
+BlackList: ${res.data.object.blacklistStatus}
 simLock: ${res.data.object.simLock == false ? "Unlocked" : "Locked"}   
                `
             );
