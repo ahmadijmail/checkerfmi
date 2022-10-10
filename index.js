@@ -13,29 +13,39 @@ app.get("/", function (req, res) {
 });
 
 app.listen(process.env.PORT);
-console.log(time().format("YYYY-MM-DD HH:mm:SS"));
+
 bot.on("message", function (msg) {
   let chatID = msg.chat.id;
+
   if (msg.chat.id == ID || msg.chat.id == ID2) {
     console.log(msg.text);
     let tex = msg.text;
     let serviceid = tex.split(" ");
-    console.log(serviceid);
+    
     axios
       .post(
         url,
         null,
         {
           params: {
-            service: serviceid[0] == "info" ? 120 : 4,
-            imei: serviceid[0] == "info" ? serviceid[1] : tex,
+            service:
+              serviceid[0] == "info" || serviceid[0] == "Info"
+                ? 120
+                : serviceid[0] == "b" || serviceid[0] == "B"
+                ? 9
+                : 4,
+            imei:
+              serviceid[0] == "info" || serviceid[0] == "b" || serviceid[0] == "B"
+                ? serviceid[1]
+                : tex,
             key: KEY,
           },
         },
-        bot.sendMessage(chatID, "Please Wait ...")
+        
       )
       .then((res) => {
-        if (serviceid[0] != "info") {
+        console.log(res);
+        if (serviceid.length == 1) {
           if (res.data.success == false) {
             bot.sendMessage(chatID, res.data.error);
           } else {
@@ -55,8 +65,7 @@ Time: ${time().format("YYYY-MM-DD HH:mm:SS")}
             );
           }
         }
-        if (serviceid[0] == "info") {
-          console.log(res.data);
+        if (serviceid[0] == "info" || serviceid[0] == "Info") {
           if (res.data.success == false) {
             bot.sendMessage(chatID, res.data.error);
           } else {
@@ -100,6 +109,28 @@ simLock: ${res.data.object.simLock == false ? "Unlocked" : "Locked"}
             );
           }
         }
+
+      
+        if (serviceid[0] == "b" || serviceid[0] == "B") {
+if(res.data.object.blacklistRecords>0){
+    bot.sendMessage(
+        chatID,
+        `IMEI: ${res.data.object.imei}        
+BlackList Date: ${res.data.object.history[0].date}            
+BlackList By: ${res.data.object.history[0].by} 🔴
+BlackList Country: ${res.data.object.history[0].Country}                              
+        `
+      );
+} bot.sendMessage(
+    chatID,
+    `IMEI: ${res.data.object.imei}        
+BlackList Status: Clean ✅                       
+    `
+  );
+
+        }
       });
+
+  
   } else bot.sendMessage(chatID, "NOT ALLOWED");
 });
