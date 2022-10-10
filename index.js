@@ -41,8 +41,8 @@ bot.on("message", function (msg) {
             key: KEY,
           },
         },
-        
-      )
+        bot.sendMessage(chatID, "Please Wait ...")
+      ) 
       .then((res) => {
         console.log(res);
         if (serviceid.length == 1) {
