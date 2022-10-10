@@ -121,7 +121,7 @@ BlackList By: ${res.data.object.history[0].by} 🔴
 BlackList Country: ${res.data.object.history[0].Country}                              
         `
       );
-} bot.sendMessage(
+}else bot.sendMessage(
     chatID,
     `IMEI: ${res.data.object.imei}        
 BlackList Status: Clean ✅                       
