@@ -1,12 +1,13 @@
-// require("dotenv").config();
-// const TelegramBot = require("node-telegram-bot-api");
-// const express = require("express");
-// const app = express();
-// const axios = require("axios");
-// const { TOKEN, ID, KEY, ID2 } = process.env;
-// let bot = new TelegramBot(TOKEN, { polling: true });
-// let time = require("moment");
-// let url = "https://api.ifreeicloud.co.uk";
+require("dotenv").config();
+const TelegramBot = require("node-telegram-bot-api");
+const express = require("express");
+const app = express();
+const axios = require("axios");
+const { TOKEN2, ID, KEY, ID2 } = process.env;
+let bot = new TelegramBot(TOKEN2, { polling: true });
+let time = require("moment");
+let url = "https://api.ifreeicloud.co.uk";
+
 
 // app.get("/", function (req, res) {
 //   res.send("working");
@@ -14,14 +15,60 @@
 
 // app.listen(process.env.PORT);
 
-// bot.on("message", function (msg) {
-//   let chatID = msg.chat.id;
+// bot.onText(/^\/start$/, function (msg) {
+//     const opts = {
+//         reply_to_message_id: msg.message_id,
+//         reply_markup: {
+//             resize_keyboard: true,
+//             one_time_keyboard: true,
+//             keyboard: [
+//               [{text: 'Level 1'}],
+//             ],
+//         }
+//     };
 
-//   if (msg.chat.id == ID || msg.chat.id == ID2) {
-//     console.log(msg.text);
-//     let tex = msg.text;
-//     let serviceid = tex.split(" ");
-    
+//     bot.sendMessage(msg.chat.id, "I'm a test robot", opts);
+// });
+
+bot.on("message", function (msg) {
+    let type=0
+  let chatID = msg.chat.id;
+
+  const opts = {
+            
+            reply_markup: {
+                resize_keyboard: true,
+                one_time_keyboard: true,
+                keyboard: [
+                  [{text: 'FMI Check'}], [{text: 'Apple Basic Info'}], [{text: 'BlackList Check'}]
+                ],
+            }
+        };
+         
+
+  if (msg.chat.id == ID || msg.chat.id == ID2) {
+    console.log(msg.text);
+    let tex = msg.text;
+    let serviceid = tex.split(" ");
+    console.log(msg);
+
+
+bot.sendMessage(msg.chat.id, `🛒 FMiP ON/OFF:
+🕒 Delivery: Instant
+ ➕ Sample Result Пример
+ ℹ️ Bulk IMEI Accepted: 👇
+💰 Price = 0.03$
+✔️ Enter IMEI/SN:` ).then(()=>{
+if(tex=="FMI Check"){
+  bot.sendMessage(msg.chat.id, msg.text, opts);
+}
+})
+
+
+ bot.sendMessage(msg.chat.id, msg.text, opts);
+}
+
+
 //     axios
 //       .post(
 //         url,
@@ -35,16 +82,18 @@
 //                 ? 9
 //                 : 4,
 //             imei:
-//               serviceid[0] == "info" || serviceid[0] == "b" || serviceid[0] == "B"
+//               serviceid[0] == "info" ||
+//               serviceid[0] == "b" ||
+//               serviceid[0] == "B"
 //                 ? serviceid[1]
 //                 : tex,
 //             key: KEY,
 //           },
 //         },
 //         bot.sendMessage(chatID, "Please Wait ...")
-//       ) 
+//       )
 //       .then((res) => {
-//         console.log(res);
+//        // console.log(res);
 //         if (serviceid.length == 1) {
 //           if (res.data.success == false) {
 //             bot.sendMessage(chatID, res.data.error);
@@ -110,27 +159,24 @@
 //           }
 //         }
 
-      
 //         if (serviceid[0] == "b" || serviceid[0] == "B") {
-// if(res.data.object.blacklistRecords>0){
-//     bot.sendMessage(
-//         chatID,
-//         `IMEI: ${res.data.object.imei}        
+//           if (res.data.object.blacklistRecords > 0) {
+//             bot.sendMessage(
+//               chatID,
+//               `IMEI: ${res.data.object.imei}        
 // BlackList Date: ${res.data.object.history[0].date}            
 // BlackList By: ${res.data.object.history[0].by} 🔴
 // BlackList Country: ${res.data.object.history[0].Country}                              
 //         `
-//       );
-// }else bot.sendMessage(
-//     chatID,
-//     `IMEI: ${res.data.object.imei}        
+//             );
+//           } else
+//             bot.sendMessage(
+//               chatID,
+//               `IMEI: ${res.data.object.imei}        
 // BlackList Status: Clean ✅                       
 //     `
-//   );
-
+//             );
 //         }
 //       });
-
-  
 //   } else bot.sendMessage(chatID, "NOT ALLOWED");
-// });
+});
