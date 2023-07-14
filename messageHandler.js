@@ -12,11 +12,11 @@ let selectedOption = ""; // Define selectedOption in the parent scope
 
 async function handleMessage(bot, msg) {
   try {
-    const chatId = msg.chat?.id;
+    const chatId = msg?.chat?.id;
     if (!chatId) {
       throw new Error("Invalid chat ID");
     }
-    const text = msg.text.trim();
+    const text = msg?.text?.trim();
 
     if (mainOptions.includes(text)) {
       selectedOption = text;

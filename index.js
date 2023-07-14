@@ -7,7 +7,6 @@ const botToken = process.env.BOT_TOKEN;
 const bot = new TelegramBot(botToken, { polling: true });
 
 bot.onText(/\/start/, (msg) => {
-  console.log(msg.chat.id);
   bot.sendMessage(msg.chat.id, "✔️ Please choose Service:👇﻿", generateMainKeyboard());
 });
 
