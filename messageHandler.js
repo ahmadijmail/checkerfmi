@@ -30,16 +30,24 @@ async function handleMessage(bot, msg) {
         generateMainKeyboard()
       );
     } else if (selectedOption !== "") {
-      const imei = text.trim();
+      // const imei = text.trim();
+      const imeis = text.split('\n').map(imei => imei.trim()); // Split input text into an array of IMEI numbers
+
       try {
         bot.sendMessage(chatId, 'Please Wait ...');
-        const response = await performApiRequest(
-          selectedOption,
-          imei,
-          process.env.API_KEY
-        );
-        const formattedResponse = response; // Assign the already formatted response directly
-        bot.sendMessage(chatId, formattedResponse);
+
+        const responses = await Promise.all(imeis.map(async imei => {
+          const response = await performApiRequest(
+            selectedOption,
+            imei,
+            process.env.API_KEY
+          );
+          return response; // Keep the responses in an array
+        }));
+      
+        responses.forEach(formattedResponse => {
+          bot.sendMessage(chatId, formattedResponse);
+        });
       } catch (error) {
         bot.sendMessage(chatId, `${error.message}`);
       }
