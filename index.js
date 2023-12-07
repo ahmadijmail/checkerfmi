@@ -10,15 +10,7 @@ const bot = new TelegramBot(botToken, { polling: true });
 const app = express();
 const port = process.env.PORT || 3000; // You can set the port in your environment variables or default to 3000
 
-// Start Express server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
 
-// Define a route for the base URL
-app.get('/', (req, res) => {
-  res.send("It's working!"); // This message will be sent when someone hits the base URL
-});
 
 job.start(); // Start the cron job
 
