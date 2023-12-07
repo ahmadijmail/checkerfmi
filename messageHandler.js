@@ -63,6 +63,8 @@ Message: " ${text} "`;
           await bot.sendMessage(chatId, message, generateMainKeyboard());
           phoneNumber = "";
           selectedOption = "";
+          console.log(message);
+
         } else {
           phoneNumber = await fetchCarrierNameAndGateway(text);
           await bot.sendMessage(
