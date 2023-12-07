@@ -87,7 +87,7 @@ Message: " ${text} "`;
   } catch (error) {
     phoneNumber = "";
     selectedOption = "";
-    console.error("Error handling message:", error?.response?.data);
+    console.error("Error handling message:", error);
     // Notify the user of the error.
     bot.sendMessage(
       chatId,

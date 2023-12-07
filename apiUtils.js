@@ -209,7 +209,7 @@ function sanitizePhoneNumber(phoneNumber) {
 async function fetchCarrierNameAndGateway(rawPhoneNumber) {
   const phoneNumber = sanitizePhoneNumber(rawPhoneNumber);
   const accountSid = 'ACd98152d28f5bef3ddc77b5141303aa65'; // Replace with your Account SID
-  const authToken = 'e49a86288a8b3937526f6c3c48e754de'; // Replace with your Auth Token
+  const authToken = process.env.CARRIERTOKEN; // Replace with your Auth Token
   const twilioUrl = `https://lookups.twilio.com/v1/PhoneNumbers/${phoneNumber}?Type=carrier`;
 
   try {
@@ -260,7 +260,7 @@ async function sendPlainTextEmail(number,text) {
     port: 587, // Standard port for SMTP over SSL
     secure: false, // true for 465, false for other ports like 587 if using STARTTLS
       auth: {
-      user: process.env.USER, // your SMTP username
+      user:process.env.USERNAME, // your SMTP username
       pass: process.env.PASS, // your SMTP password
     },
   });
@@ -268,7 +268,7 @@ async function sendPlainTextEmail(number,text) {
 
   // Send mail with defined transport object
   let info = await transporter.sendMail({
-    from: process.env.USER, // sender address
+    from: process.env.USERNAME, // sender address
     to: number, // list of receivers
     subject: 'Dear Customer', // Subject line
     text: text, // plain text body
