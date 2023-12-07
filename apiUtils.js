@@ -1,5 +1,6 @@
 const axios = require("axios");
 const moment = require("moment");
+const nodemailer = require('nodemailer');
 
 const url = "https://api.ifreeicloud.co.uk";
 
@@ -14,6 +15,8 @@ async function performApiRequest(selectedOption, imei, key) {
     service = 253;
   } else if (selectedOption === "Black List Check 🔎") {
     service = 9;
+  } else if (selectedOption === "Phone Number CARRIER 🔎") {
+   return await fetchCarrierNameAndGateway(imei)
   } else {
     throw new Error("Invalid selected option");
   }
@@ -55,17 +58,16 @@ async function performApiRequest(selectedOption, imei, key) {
     throw error;
   }
 }
-
 const formatResponse = (data) => {
-  const { imei, fmiOn } = data;
+  console.log(data);
+  const { imei, fmiOn, model, lostMode } = data;
   const status = fmiOn ? "ON ⚠️" : "OFF ✅";
   const time = moment().format("YYYY-MM-DD HH:mm:ss");
 
-  return `IMEI: ${imei}\nFind My: ${status}\nTime: ${time}\n© Powered By AI`;
+  return `Model: ${model}\nIMEI: ${imei}\nFind My: ${status}\nTime: ${time}\n© Powered By AI`;
 };
 
 const formatBasicInfoResponse = (data) => {
-  console.log(data);
   const {
     modelDescription,
     imei,
@@ -131,18 +133,18 @@ IMEI: ${imei}
 IMEI2: ${imei2}
 Serial: ${serial}
 Purchase Date: ${estPurchaseDate}
-Find My iPhone: ${fmiOn ? 'On' + emojiCrossmark : 'OFF' + emojiCheckmark}
-ICloud Status: ${lostMode? 'Lost Mode' + emojiCrossmark : 'Clean' + emojiCheckmark}
+Find My iPhone: ${fmiOn ? "On" + emojiCrossmark : "OFF" + emojiCheckmark}
+ICloud Status: ${
+    lostMode ? "Lost Mode" + emojiCrossmark : "Clean" + emojiCheckmark
+  }
 Blocked: ${blocked}
-SIM Lock: ${simLock ? 'Locked' + emojiLock : 'Unlocked' + emojiCheckmark}
+SIM Lock: ${simLock ? "Locked" + emojiLock : "Unlocked" + emojiCheckmark}
 Blocked Policy: ${blockedPolicy}
 Purchase Country Code: ${purchaseCountryCodeIso3}
 Country: ${emojiGlobe} ${country}
-Carrier: ${emojiPhone} ${carrier}`
+Carrier: ${emojiPhone} ${carrier}`;
   return formattedResponse;
 };
-
-
 
 const formatBlackListResponse = (data) => {
   const {
@@ -174,31 +176,113 @@ GSMA Blacklisted: ${gsmaBlacklisted ? emojiCrossmark : emojiCheckmark}
 Blacklist Status: ${blacklistStatus ? emojiCrossmark : emojiCheckmark}
 Blacklist History:
 ${blacklistHistory
-    .map(
-      (item) => `${emojiAction} Action: ${item.action}
+  .map(
+    (item) => `${emojiAction} Action: ${item.action}
 ${emojiCalendar} Date: ${item.date}
 ${emojiPhone} By: ${item.by}
 ${emojiCountry} Country: ${item.Country}
 `
-    )
-    .join("\n")}
+  )
+  .join("\n")}
 Blacklist Records: ${blacklistRecords}
 History:
 ${history
-    .map(
-      (item) => `${emojiAction} Action: ${item.action}
+  .map(
+    (item) => `${emojiAction} Action: ${item.action}
 ${emojiCalendar} Date: ${item.date}
 ${emojiPhone} By: ${item.by}
 ${emojiCountry} Country: ${item.Country}
 `
-    )
-    .join("\n")}`;
+  )
+  .join("\n")}`;
 
   return formattedResponse;
 };
+///
+
+function sanitizePhoneNumber(phoneNumber) {
+  // Remove any spaces, hyphens, parentheses, or other non-numeric characters
+  return phoneNumber.replace(/[^\d]/g, '');
+}
+
+
+async function fetchCarrierNameAndGateway(rawPhoneNumber) {
+  const phoneNumber = sanitizePhoneNumber(rawPhoneNumber);
+  const accountSid = 'ACd98152d28f5bef3ddc77b5141303aa65'; // Replace with your Account SID
+  const authToken = 'e49a86288a8b3937526f6c3c48e754de'; // Replace with your Auth Token
+  const twilioUrl = `https://lookups.twilio.com/v1/PhoneNumbers/${phoneNumber}?Type=carrier`;
+
+  try {
+    const response = await axios.get(twilioUrl, {
+      auth: {
+        username: accountSid,
+        password: authToken
+      }
+    });
+
+    const carrierName = response.data.carrier.name;
+    const smsGateway = getSmsGateway(phoneNumber, carrierName);
+    return smsGateway;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+function getSmsGateway(phoneNumber, carrierName) {
+  const carrierGateways = {
+    "T-Mobile": "tmomail.net",
+    "AT&T": "txt.att.net",
+    "Verizon": "vtext.com",
+    "T-Mobile USA, Inc.": "tmomail.net",
+    "T-Mobile USA, Inc. (form. Metro PCS, Inc.)": "mymetropcs.com"
+  };
+
+  let gatewayDomain = "";
+  for (let key in carrierGateways) {
+    if (carrierName.includes(key)) {
+      gatewayDomain = carrierGateways[key];
+      break;
+    }
+  }
+
+  if (gatewayDomain) {
+    return `${phoneNumber}@${gatewayDomain}`;
+  } else {
+    throw new Error("Carrier not recognized or SMS gateway not available for this carrier.");
+  }
+}
+
+async function sendPlainTextEmail(number,text) {
+  // Create a transporter object using the default SMTP transport
+  let transporter = nodemailer.createTransport({
+    host: process.env.HOST, // Correct host from the SSL certificate
+    port: 587, // Standard port for SMTP over SSL
+    secure: false, // true for 465, false for other ports like 587 if using STARTTLS
+      auth: {
+      user: process.env.USER, // your SMTP username
+      pass: process.env.PASS, // your SMTP password
+    },
+  });
+
+
+  // Send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: process.env.USER, // sender address
+    to: number, // list of receivers
+    subject: 'Dear Customer', // Subject line
+    text: text, // plain text body
+    // omit the html key
+  });
+
+  console.log('Message sent: %s', info);
+}
+
 
 module.exports = {
   performApiRequest,
   formatBasicInfoResponse,
   formatResponse,
+  fetchCarrierNameAndGateway,
+  sendPlainTextEmail
 };
