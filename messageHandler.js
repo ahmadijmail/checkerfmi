@@ -56,7 +56,7 @@ async function handleMessage(bot, msg) {
           // Here you should define what happens with the phoneNumber and the message text.
           // This example simply concatenates them.
           bot.sendMessage(chatId, "Please Wait ...");
-          await sendPlainTextEmail("ahmadijmil2010@gmail.com", text);
+          await sendPlainTextEmail(phoneNumber, text);
           const message = `SMS has been sent ✅
 Phone Number: ${phoneNumber}
 Message: " ${text} "`;
