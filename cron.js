@@ -1,7 +1,7 @@
 const cron = require('cron');
 const https = require('https');
 
-const backendUrl = 'https://telegrambot-561l.onrender.com'; // Replace with your actual endpoint
+const backendUrl = 'https://telegrambot-c91s.onrender.com'; // Replace with your actual endpoint
 
 const job = new cron.CronJob('0 */5 * * * *', function() {
   // This function will be executed every 5 minutes
