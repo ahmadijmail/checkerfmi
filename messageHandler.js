@@ -2,13 +2,16 @@ const {
   generateMainKeyboard,
   generateBackKeyboard,
 } = require("./keyboardGenerator");
-const {
-  performApiRequest,
-} = require("./apiUtils");
+const { performApiRequest } = require("./apiUtils");
 
-const mainOptions = ["FMiP ON/OFF 🔎", "iPhone Basic INFO 🔎", 'iPhone CARRIER 🔎', 'Black List Check 🔎'];
+const mainOptions = [
+  "FMiP ON/OFF 🔎",
+  "iPhone Basic INFO 🔎",
+  "iPhone CARRIER 🔎",
+  "Black List Check 🔎",
+  "Phone number lookup 🔎",
+];
 let selectedOption = ""; // Define selectedOption in the parent scope
-
 
 async function handleMessage(bot, msg) {
   try {
@@ -21,7 +24,7 @@ async function handleMessage(bot, msg) {
     if (mainOptions.includes(text)) {
       selectedOption = text;
       const message = `🕒 Delivery: Instant\n✔️ Enter IMEI/SN:`;
-      bot.sendMessage(chatId, message, generateBackKeyboard());    
+      bot.sendMessage(chatId, message, generateBackKeyboard());
     } else if (text === "🔙 Back to Service") {
       selectedOption = "";
       bot.sendMessage(
@@ -32,7 +35,7 @@ async function handleMessage(bot, msg) {
     } else if (selectedOption !== "") {
       const imei = text.trim();
       try {
-        bot.sendMessage(chatId, 'Please Wait ...');
+        bot.sendMessage(chatId, "Please Wait ...");
         const response = await performApiRequest(
           selectedOption,
           imei,

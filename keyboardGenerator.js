@@ -2,6 +2,7 @@ const generateMainKeyboard = () => ({
   reply_markup: {
     keyboard: [
       [{ text: "FMiP ON/OFF 🔎" }],
+      [{ text: "Phone number lookup 🔎" }],
       [{ text: "iPhone Basic INFO 🔎" }],
       [{ text: "iPhone CARRIER 🔎" }],
       [{ text: "Black List Check 🔎" }],
