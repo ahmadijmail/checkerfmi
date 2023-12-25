@@ -219,35 +219,47 @@ async function fetchCarrierNameAndGateway(rawPhoneNumber) {
       },
     });
 
-    const carrierName = response.data.carrier.name;
+    // Check if response and response.data are defined
+    if (!response || !response.data) {
+      throw new Error('Carrier not recognized or SMS gateway not available for this carrier.');
+    }
+
+    const carrierName = response.data.carrier?.name;
+    if (!carrierName) {
+      throw new Error('Carrier name not found');
+    }
+
     const smsGateway = getSmsGateway(phoneNumber, carrierName);
     return smsGateway;
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error('error1',error);
+    throw error
   }
 }
 
+
 function getSmsGateway(phoneNumber, carrierName) {
-  const carrierGateways = {
-    "T-Mobile": "tmomail.net",
-    "AT&T": "txt.att.net",
-    Verizon: "vtext.com",
-    "T-Mobile USA, Inc.": "tmomail.net",
-    "T-Mobile USA, Inc. (form. Metro PCS, Inc.)": "mymetropcs.com",
-  };
+  try {
+    const carrierGateways = {
+      "T-Mobile": "tmomail.net",
+      "AT&T": "txt.att.net",
+      Verizon: "vtext.com",
+      "T-Mobile USA, Inc.": "tmomail.net",
+      "T-Mobile USA, Inc. (form. Metro PCS, Inc.)": "mymetropcs.com",
+    };
 
-  let gatewayDomain = "";
-  for (let key in carrierGateways) {
-    if (carrierName.includes(key)) {
-      gatewayDomain = carrierGateways[key];
-      break;
+    let gatewayDomain = "";
+    for (let key in carrierGateways) {
+      if (carrierName.includes(key)) {
+        gatewayDomain = carrierGateways[key];
+        break;
+      }
     }
-  }
 
-  if (gatewayDomain) {
-    return `${phoneNumber}@${gatewayDomain}`;
-  } else {
+    if (gatewayDomain) {
+      return `${phoneNumber}@${gatewayDomain}`;
+    }
+  } catch {
     throw new Error(
       "Carrier not recognized or SMS gateway not available for this carrier."
     );

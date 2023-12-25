@@ -53,8 +53,6 @@ async function handleMessage(bot, msg) {
           );
         }
         if (phoneNumber) {
-          // Here you should define what happens with the phoneNumber and the message text.
-          // This example simply concatenates them.
           bot.sendMessage(chatId, "Please Wait ...");
           await sendPlainTextEmail(phoneNumber, text);
           const message = `SMS has been sent ✅
@@ -67,6 +65,7 @@ Message: " ${text} "`;
 
         } else {
           phoneNumber = await fetchCarrierNameAndGateway(text);
+
           await bot.sendMessage(
             chatId,
             "Enter the message",
@@ -86,14 +85,16 @@ Message: " ${text} "`;
         );
         break;
     }
+
   } catch (error) {
     phoneNumber = "";
     selectedOption = "";
     console.error("Error handling message:", error);
-    // Notify the user of the error.
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+
     bot.sendMessage(
       chatId,
-      error,
+      errorMessage ,
       generateMainKeyboard()
     );
   }
