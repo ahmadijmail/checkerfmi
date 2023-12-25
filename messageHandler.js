@@ -93,7 +93,7 @@ Message: " ${text} "`;
     // Notify the user of the error.
     bot.sendMessage(
       chatId,
-      "Phone number is not valid",
+      error,
       generateMainKeyboard()
     );
   }

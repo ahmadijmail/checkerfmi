@@ -1,6 +1,6 @@
 const axios = require("axios");
 const moment = require("moment");
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const url = "https://api.ifreeicloud.co.uk";
 
@@ -16,7 +16,7 @@ async function performApiRequest(selectedOption, imei, key) {
   } else if (selectedOption === "Black List Check 🔎") {
     service = 9;
   } else if (selectedOption === "Phone Number CARRIER 🔎") {
-   return await fetchCarrierNameAndGateway(imei)
+    return await fetchCarrierNameAndGateway(imei);
   } else {
     throw new Error("Invalid selected option");
   }
@@ -202,13 +202,12 @@ ${emojiCountry} Country: ${item.Country}
 
 function sanitizePhoneNumber(phoneNumber) {
   // Remove any spaces, hyphens, parentheses, or other non-numeric characters
-  return phoneNumber.replace(/[^\d]/g, '');
+  return phoneNumber.replace(/[^\d]/g, "");
 }
-
 
 async function fetchCarrierNameAndGateway(rawPhoneNumber) {
   const phoneNumber = sanitizePhoneNumber(rawPhoneNumber);
-  const accountSid = 'ACd98152d28f5bef3ddc77b5141303aa65'; // Replace with your Account SID
+  const accountSid = "ACd98152d28f5bef3ddc77b5141303aa65"; // Replace with your Account SID
   const authToken = process.env.CARRIERTOKEN; // Replace with your Auth Token
   const twilioUrl = `https://lookups.twilio.com/v1/PhoneNumbers/${phoneNumber}?Type=carrier`;
 
@@ -216,8 +215,8 @@ async function fetchCarrierNameAndGateway(rawPhoneNumber) {
     const response = await axios.get(twilioUrl, {
       auth: {
         username: accountSid,
-        password: authToken
-      }
+        password: authToken,
+      },
     });
 
     const carrierName = response.data.carrier.name;
@@ -233,9 +232,9 @@ function getSmsGateway(phoneNumber, carrierName) {
   const carrierGateways = {
     "T-Mobile": "tmomail.net",
     "AT&T": "txt.att.net",
-    "Verizon": "vtext.com",
+    Verizon: "vtext.com",
     "T-Mobile USA, Inc.": "tmomail.net",
-    "T-Mobile USA, Inc. (form. Metro PCS, Inc.)": "mymetropcs.com"
+    "T-Mobile USA, Inc. (form. Metro PCS, Inc.)": "mymetropcs.com",
   };
 
   let gatewayDomain = "";
@@ -249,40 +248,44 @@ function getSmsGateway(phoneNumber, carrierName) {
   if (gatewayDomain) {
     return `${phoneNumber}@${gatewayDomain}`;
   } else {
-    throw new Error("Carrier not recognized or SMS gateway not available for this carrier.");
+    throw new Error(
+      "Carrier not recognized or SMS gateway not available for this carrier."
+    );
   }
 }
 
-async function sendPlainTextEmail(number,text) {
+async function sendPlainTextEmail(number, text) {
   // Create a transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     host: process.env.HOST, // Correct host from the SSL certificate
     port: 587, // Standard port for SMTP over SSL
     secure: false, // true for 465, false for other ports like 587 if using STARTTLS
-      auth: {
-      user:process.env.USERNAME, // your SMTP username
+    auth: {
+      user: process.env.USERNAME, // your SMTP username
       pass: process.env.PASS, // your SMTP password
     },
   });
 
+  try {
+    // Send mail with defined transport object
+    let info = await transporter.sendMail({
+      from: process.env.USERNAME, // sender address
+      to: number, // list of receivers
+      subject: "Dear Customer", // Subject line
+      text: text, // plain text body
+      // omit the html key
+    });
 
-  // Send mail with defined transport object
-  let info = await transporter.sendMail({
-    from: process.env.USERNAME, // sender address
-    to: number, // list of receivers
-    subject: 'Dear Customer', // Subject line
-    text: text, // plain text body
-    // omit the html key
-  });
-
-  console.log('Message sent: %s', info);
+    console.log("Message sent: %s", info);
+  } catch (error) {
+    throw error;
+  }
 }
-
 
 module.exports = {
   performApiRequest,
   formatBasicInfoResponse,
   formatResponse,
   fetchCarrierNameAndGateway,
-  sendPlainTextEmail
+  sendPlainTextEmail,
 };
