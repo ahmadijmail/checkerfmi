@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 // Configure body-parser to handle post requests
 app.use(bodyParser.json());
 
-const webhookUrl = `https://${process.env.Domain}/bot${botToken}`;
+const webhookUrl = `https://${process.env.DOMAIN}/bot${botToken}`;
 bot.setWebHook(webhookUrl);
 
 // Define a route that handles incoming webhook requests
