@@ -43,12 +43,11 @@ async function handleMessage(bot, msg) {
         bot.sendMessage(chatId, "Please Wait ...");
         for (const imei of imeis) {
           try {
-            const response = await performApiRequest(
+            const formattedResponse = await performApiRequest(
               selectedOption,
               imei,
               process.env.API_KEY
             );
-            const formattedResponse = `${imei}: ${response}`;
             bot.sendMessage(chatId, formattedResponse);
           } catch (error) {
             bot.sendMessage(chatId, `${imei}: ${error.message}`);
