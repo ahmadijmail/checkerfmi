@@ -23,34 +23,47 @@ async function handleMessage(bot, msg) {
 
     if (mainOptions.includes(text)) {
       selectedOption = text;
-      const message = `🕒 Delivery: Instant\n✔️ Enter IMEI/SN:`;
+      const message = `🕒 Delivery: Instant\n✔️ Enter IMEI/SN (one per line):`;
       bot.sendMessage(chatId, message, generateBackKeyboard());
     } else if (text === "🔙 Back to Service") {
       selectedOption = "";
       bot.sendMessage(
         chatId,
-        "✔️ Please choose Service:👇﻿",
+        "✔️ Please choose Service:👇",
         generateMainKeyboard()
       );
     } else if (selectedOption !== "") {
-      const imei = text.trim();
+      const imeis = text.split('\n').map(imei => imei.trim()).filter(imei => imei !== '');
+      if (imeis.length === 0) {
+        bot.sendMessage(chatId, "No valid IMEI/SN entered.");
+        return;
+      }
+
       try {
         bot.sendMessage(chatId, "Please Wait ...");
-        const response = await performApiRequest(
-          selectedOption,
-          imei,
-          process.env.API_KEY
-        );
-        const formattedResponse = response; // Assign the already formatted response directly
+        const responses = await Promise.all(imeis.map(async (imei) => {
+          try {
+            const response = await performApiRequest(
+              selectedOption,
+              imei,
+              process.env.API_KEY
+            );
+            return `${imei}: ${response}`;
+          } catch (error) {
+            return `${imei}: ${error.message}`;
+          }
+        }));
+        const formattedResponse = responses.join('\n');
         bot.sendMessage(chatId, formattedResponse);
       } catch (error) {
-        bot.sendMessage(chatId, `${error.message}`);
+        bot.sendMessage(chatId, `Error processing IMEI/SN: ${error.message}`);
       }
     }
   } catch (error) {
     console.error("Error handling message:", error);
   }
 }
+
 
 module.exports = {
   handleMessage,
