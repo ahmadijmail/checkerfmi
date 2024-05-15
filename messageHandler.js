@@ -41,20 +41,19 @@ async function handleMessage(bot, msg) {
 
       try {
         bot.sendMessage(chatId, "Please Wait ...");
-        const responses = await Promise.all(imeis.map(async (imei) => {
+        for (const imei of imeis) {
           try {
             const response = await performApiRequest(
               selectedOption,
               imei,
               process.env.API_KEY
             );
-            return `${imei}: ${response}`;
+            const formattedResponse = `${imei}: ${response}`;
+            bot.sendMessage(chatId, formattedResponse);
           } catch (error) {
-            return `${imei}: ${error.message}`;
+            bot.sendMessage(chatId, `${imei}: ${error.message}`);
           }
-        }));
-        const formattedResponse = responses.join('\n');
-        bot.sendMessage(chatId, formattedResponse);
+        }
       } catch (error) {
         bot.sendMessage(chatId, `Error processing IMEI/SN: ${error.message}`);
       }
@@ -63,6 +62,7 @@ async function handleMessage(bot, msg) {
     console.error("Error handling message:", error);
   }
 }
+
 
 
 module.exports = {
