@@ -6,7 +6,7 @@ const { handleMessage } = require("./messageHandler");
 const { generateMainKeyboard } = require("./keyboardGenerator");
 
 const botToken = process.env.BOT_TOKEN;
-const authorizedUserId = process.env.AUTHORIZED_USER_ID;
+const authorizedUserId = process.env.USER_ID;
 
 if (!botToken) {
   console.error('Bot token must be provided in BOT_TOKEN environment variable!');
