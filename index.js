@@ -6,8 +6,15 @@ const { handleMessage } = require("./messageHandler");
 const { generateMainKeyboard } = require("./keyboardGenerator");
 
 const botToken = process.env.BOT_TOKEN;
+const authorizedUserId = process.env.AUTHORIZED_USER_ID;
+
 if (!botToken) {
   console.error('Bot token must be provided in BOT_TOKEN environment variable!');
+  process.exit(1);
+}
+
+if (!authorizedUserId) {
+  console.error('Authorized user ID must be provided in AUTHORIZED_USER_ID environment variable!');
   process.exit(1);
 }
 
@@ -27,11 +34,28 @@ app.post(`/bot${botToken}`, (req, res) => {
   res.sendStatus(200);
 });
 
+// Middleware to validate user
+const validateUser = (msg, callback) => {
+  if (msg.from.id.toString() === authorizedUserId) {
+    callback();
+  } else {
+    bot.sendMessage(msg.chat.id, "⛔ Unauthorized access.");
+  }
+};
+
+// Start command handler
 bot.onText(/\/start/, (msg) => {
-  bot.sendMessage(msg.chat.id, "✔️ Please choose Service:👇", generateMainKeyboard());
+  validateUser(msg, () => {
+    bot.sendMessage(msg.chat.id, "✔️ Please choose Service:👇", generateMainKeyboard());
+  });
 });
 
-bot.on("message", (msg) => handleMessage(bot, msg));
+// General message handler
+bot.on("message", (msg) => {
+  validateUser(msg, () => {
+    handleMessage(bot, msg);
+  });
+});
 
 // Start the Express server
 app.listen(PORT, () => {
