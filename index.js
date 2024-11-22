@@ -18,7 +18,7 @@ if (!authorizedUserId) {
   process.exit(1);
 }
 
-const bot = new TelegramBot(botToken);
+const bot = new TelegramBot(botToken, { polling: true });
 const app = express();
 const PORT = process.env.PORT || 3000;
 
